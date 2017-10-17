@@ -3,17 +3,18 @@
 from cmd import *
 from FileManagement.FileHandler import *
 from Graph import *
+from Database.SQLDatabase import SQLDatabase
 
 
 class Interpreter(Cmd):
 
     # Kris
-    def __init__(self):
+    def __init__(self, database_name):
         Cmd.__init__(self)
         self.file_handler = FileHandler()
-        self.graph = Graph()
+        self.database = SQLDatabase(database_name)
+        self.graph = Graph(self.database)
         self.graphs = []
-        self.database = SQLDatabase()
 
     # Kris
     # Pull data from database
@@ -45,8 +46,6 @@ class Interpreter(Cmd):
 
         """
         args = args.split(' ')
-        file_path = ""
-        optn = ""
         if len(args) == 1:
             file_path = args[0]
             data = self.file_handler.load_file(file_path)
@@ -179,7 +178,7 @@ class Interpreter(Cmd):
             args = getopt.getopt(args, "t:o:", ["graph-type=", "option="])
             argss = args[1].split()
             # Raises exception if the incorrect amount of args have been entered
-            if len(argss) > 2 or len(argss) < 2:
+            if len(argss) != 2:
                 raise TypeError
             # Raises exception if the args have been incorrectly typed
             if argss[0] == 'pie' and argss[1] != 'gender' and argss[1] != 'bmi' and argss[1] != 'age' \
