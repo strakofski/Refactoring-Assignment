@@ -66,8 +66,6 @@ class Validator():
                 
                 return add_data
             
-            
         
-            
-                                
+
                     

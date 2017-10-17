@@ -18,11 +18,32 @@ class Interpreter(Cmd):
     # Kris
     # Pull data from database
     def do_display_data(self, args):
+        """
+        --- Display Data ---
+        Display all the data from the database in text form
+        type "display_data"
+
+        This command takes no options or arguments.
+
+         """
         self.database.display_data()
 
     # Kris Little
     # - This function loads and saves data to the database
     def do_load_from_file(self, args):
+        """
+        --- Load File ---
+        Load data from a file and save it to the database
+        type "load_from_file - option filepath"
+
+        OPTIONS:
+            -g: Create a graph with the data
+            -d: Save data to the database. Default option.
+
+        ARGUEMENT:
+            filepath: Supply a filename or file path to the wanted file.
+
+        """
         args = args.split(' ')
         file_path = ""
         optn = ""
@@ -51,6 +72,19 @@ class Interpreter(Cmd):
     # backup the database. This could be changed to use the pickle
     # function brendan makes soon
     def do_backup_database(self, args):
+        """
+
+        --- Backup Database ---
+        Save existing data in the database to file
+        type "backup_database -option filepath"
+
+        OPTIONS:
+            -o: Overwrite existing file
+
+        ARGUMENTS:
+            filepath: Supply a filename or file path to desire location
+
+        """
         args = args.split(' ')
         msg = ""
         data = self.database.backup_database()
@@ -86,6 +120,18 @@ class Interpreter(Cmd):
     # default value 'new_graph' is only set when called from creategraph which will return it by reference
     # the default value will be used should the user call the function from the command line
     def do_display_graph(self, args, my_graph=None):
+        """
+
+        --- Display graph ---
+        Display a bar or pie graph that visually represents the data
+        type "display_graph <chart-type> <data-type>"
+
+        ARGUMENTS:
+            chart-type: type of graph. Can be either 'pie' or 'bar'
+            data-type: the data you want to show. For 'pie' chart can be 'gender, bmi or age'.
+            For 'bar' graph can be 'salary by gender'
+
+        """
         try:
             argss = []
             args = getopt.getopt(args, "t:o:", ["graph-type=", "option="])
@@ -118,6 +164,17 @@ class Interpreter(Cmd):
     # Used to create a graph by calling collecting user defined arguments -
     # and passing them to build_graph in the graph class
     def do_create_graph(self, args):
+        """
+
+        --- Create Graph ---
+        Create a bar or pie graph that visually represent the chosen data
+        type "create_graph <chart-type> <data-type>"
+
+        ARGUMENTS:
+            chart-type: type of graph. Can be either 'pie' or 'bar'
+            data-type: the data you want to show. For 'pie' chart can be 'gender, bmi or age'.
+            For 'bar' graph can be 'salary by gender'
+        """
         try:
             args = getopt.getopt(args, "t:o:", ["graph-type=", "option="])
             argss = args[1].split()
@@ -140,6 +197,16 @@ class Interpreter(Cmd):
     # Brendan Holt
     # User called function to list graphs currenltly loaded in the interpreters graph list
     def do_list_graphs(self, args):
+        """
+
+        --- List Graph ---
+        Display a list of graphs. Use this if a specific graph is needed to load
+        type "list_graph <graph-type>"
+
+        ARGUMENTS:
+            graph-type: Either pie or bar graph
+
+        """
         try:
             args = getopt.getopt(args, "t:o:", ["graph-type="])
             argss = args[1].split()
@@ -193,6 +260,15 @@ class Interpreter(Cmd):
     # Pickles the currently loaded graphs in the list self.graph by calling the file handlers pack_pickle
     # Args is currently not used but kept to implement user defined files should the need arise
     def do_save_graphs(self, args):
+        """
+
+        --- Save Graph ---
+        Save existing graphs to a file so they can be loaded again
+        type "save_graphs"
+
+        This command has no arguments or option.
+
+        """
         try:
             if len(self.graphs) < 1:
                 raise ValueError
@@ -205,6 +281,15 @@ class Interpreter(Cmd):
     # Unpickles the default pickle file (see unpack_pickle in the file handler) to the graphs list
     # Args is currently not used but kept to implement user defined files should the need arise
     def do_load_graphs(self, args):
+        """
+
+        --- Load Graph ---
+        Load graphs that have been saved
+        type "load_graphs"
+
+        This command takes no options or arguments
+
+        """
         # Should the file not exist an exception is raised in the file handler
         filepath = os.path.dirname(os.path.realpath(sys.argv[0])) + "\\files\\pickle.dat"
         # Ensure graph list is cleared
@@ -216,90 +301,17 @@ class Interpreter(Cmd):
     # Pickles and backs up the entire database
     # Args is currently not used but kept to implement user defined files should the need arise
     def do_pickle(self, args):
+        """
+        --- Pickle ---
+        Encrypt database
+        type "pickle"
+
+        This command takes no options or arguments
+
+        """
         data = self.database.backup_database()
         print('The above has been pickled to a backup file')
         self.file_handler.pickle_all(data)
-
-    # Help Commands - Kate
-    # For each of the do_ commands above, print help info about them
-    # Following this format: help_function
-    # e.g. help_write_data(self):
-    # for info on what each function does, check out the help.doc file
-    def do_about(args):
-        """
-        This about command shows user some information about this application
-        """
-
-        print("Welcome to Interterpreter \n" +
-              " This application able to read, store and display data \n" +
-              "in a given format \n")
-
-    def help_display_data(self):
-        print("Display data is a simple command that shows all "
-              "the data from the database in text form.\n" +
-              "USAGE: display_data\n" +
-              "OPTIONS and ARGUMENTS: This command takes no options or arguments.")
-
-    def help_load_from_file(self):
-        print("Load data from a file and save it to the database.\n" +
-              "USAGE: load_from_file -option filepath\n" +
-              "OPTIONS:\n" +
-              "   -g: Create a graph with the data\n" +
-              "   -d: Save data to the database. This is the default option.\n" +
-              "ARGUMENTS:\n" +
-              "   filepath: Supply a filename or file path to the file that you want to load.")
-
-    def help_backup_database(self):
-        print("This command saves data to a file.\n" +
-              "USAGE: backup_database -option filepath\n" +
-              "OPTIONS:\n" +
-              "   -o: Overwrite existing file\n" +
-              "ARGUMENTS:\n" +
-              "   filepath: Supply a filename or file path to where you want to save the database.")
-
-    def help_create_graph(self):
-        print("Create a bar or pie graph that visually represents data.\n" +
-              "USAGE: create_graph <chart-type> <data>\n" +
-              "OPTIONS: this command takes no options.\n" +
-              "ARGUMENTS:\n" +
-              "   chart-type: the type of graph you want to create. Can be 'pie' or 'graph'\n" +
-              "   data: the data you want to show. For 'pie' "
-              "it can be 'gender, bmi or age', for 'bar' it can be 'salary-by-gender'")
-
-    def help_display_graph(self):
-        print("Create a bar or pie graph that visually represents data.\n" +
-              "USAGE: display_graph <chart-type> <data>\n" +
-              "OPTIONS: this command takes no options.\n" +
-              "ARGUMENTS:\n" +
-              "   chart-type: the type of graph you want to create. Can be 'pie' or 'graph'\n" +
-              "   data: the data you want to show. For 'pie'"
-              " it can be 'gender, bmi or age', for 'bar' it can be 'salary-by-gender'")
-
-    def help_list_graphs(self):
-        print("Display a list of graphs. Use this if you need to load a specific "
-              "graph that is active in the system.\n" +
-              "USAGE: list_graphs <graph-type>\n" +
-              "OPTIONS: This function takes no options.\n" +
-              "ARGUMENTS:\n" +
-              "   graph-type: Supply the type of graph you want to list. Can be 'pie' or 'bar'.")
-
-    def help_load_graphs(self):
-        print("Load graphs that have been saved.\n" +
-              "USAGE: load_graphs\n" +
-              "OPTIONS: This function takes no options.\n" +
-              "ARGUMENTS:This function takes no arguments\n")
-
-    def help_save_graphs(self):
-        print("Save existing graphs to a file so they can be loaded again.\n" +
-              "USAGE: save_graphs\n" +
-              "OPTIONS: This function takes no options.\n" +
-              "ARGUMENTS:This function takes no arguments\n")
-
-    def help_pickle(self):
-        print("Encrypt database\n" +
-              "USAGE: pickle\n" +
-              "OPTIONS: This function takes no options.\n" +
-              "ARGUMENTS:This function takes no arguments\n")
 
     def emptyline(self):
         pass
